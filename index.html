@@ -4,62 +4,106 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Image Gallery</title>
-<style>
-    body {
-    /* Specify the background image */
-    background-image: url('img/bg.png');
-    /* Repeat the background image vertically and horizontally */
-    background-repeat: repeat;
-    /* Make the background image scroll with the page */
-    background-attachment: scroll;
-    /* Optional: Set the background color in case the image is unavailable */
-    background-color: #cccccc;
-    margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}   
-   html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-  .reader {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 33vw; /* Height is half the viewport width */
-  background-color: #f0f0f0; /* Light grey, change as needed */
-  z-index: 10;
-  overflow: hidden;
-  text-align: center; /* Center the content */
-  }
-  .gallery {
-    margin-top: 33vw;
-    display:grid;
-    grid-template-columns: auto auto auto;
-  }
-  .gallery-item {
-    padding: 5px;
-    text-align: center;
-  }
-  img {
-    width: 100%;
-    height: auto;
-    transition: transform 0.3s ease;
-  }
-  img:hover {
-    transform: scale(1.05); /* Optional: adds a slight zoom effect on hover */
-  }
-</style>
+<script src="js/quagga.min.js"></script>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div id="reader" class="reader"><img src="img/000.png"></div>
-  <div id="gallery" class="gallery"></div>
+  <div id="scanner-container"></div>
+  <div id="gallery"></div>
+
+  <script src="js/quagga.min.js"></script>
 
 <script>
+        var _scannerIsRunning = false;
+
+function startScanner() {
+    const scannerContainer = document.querySelector('#scanner-container');
+    const containerWidth = scannerContainer.offsetWidth; 
+    const containerHeight = scannerContainer.offsetHeight; 
+    Quagga.init({
+        inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: document.querySelector('#scanner-container'),
+            constraints: {
+                width: containerWidth,
+                height: containerHeight,
+                facingMode: "environment"
+            },
+        },
+        decoder: {
+            readers: [
+                "code_128_reader",
+                "ean_reader",
+                "ean_8_reader",
+                "code_39_reader",
+                "code_39_vin_reader",
+                "codabar_reader",
+                "upc_reader",
+                "upc_e_reader",
+                "i2of5_reader"
+            ],
+            debug: {
+                showCanvas: true,
+                showPatches: true,
+                showFoundPatches: true,
+                showSkeleton: true,
+                showLabels: true,
+                showPatchLabels: true,
+                showRemainingPatchLabels: true,
+                boxFromPatches: {
+                    showTransformed: true,
+                    showTransformedBox: true,
+                    showBB: true
+                }
+            }
+        },
+
+    }, function (err) {
+        if (err) {
+            console.log(err);
+            return
+        }
+
+        console.log("Initialization finished. Ready to start");
+        Quagga.start();
+
+        // Set flag to is running
+        _scannerIsRunning = true;
+    });
+
+    Quagga.onProcessed(function (result) {
+        var drawingCtx = Quagga.canvas.ctx.overlay,
+        drawingCanvas = Quagga.canvas.dom.overlay;
+
+        if (result) {
+            if (result.boxes) {
+                drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                result.boxes.filter(function (box) {
+                    return box !== result.box;
+                }).forEach(function (box) {
+                    Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, { color: "green", lineWidth: 2 });
+                });
+            }
+
+            if (result.box) {
+                Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, { color: "#00F", lineWidth: 2 });
+            }
+
+            if (result.codeResult && result.codeResult.code) {
+                Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, drawingCtx, { color: 'red', lineWidth: 3 });
+            }
+        }
+    });
+
+
+    Quagga.onDetected(function (result) {
+        console.log("Barcode detected and processed : [" + result.codeResult.code + "]", result);
+    });
+}
+
+
 const totalImages = 150; // Total number of images
 const imagesPerColumn = 3; // Replace N with the desired number of images per column
 const folderPath = 'img/'; // Path to the folder containing the images
@@ -87,6 +131,8 @@ function initGallery() {
     gallery.appendChild(item);
 
   }
+
+  startScanner();
 }
 
 // Initialize the gallery when the page loads
