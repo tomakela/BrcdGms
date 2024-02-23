@@ -15,8 +15,12 @@
   <script src="js/quagga.min.js"></script>
 
 <script>
-        var _scannerIsRunning = false;
-
+  var last_code = 0;
+  var last_counter = 0;
+  var audio = new Audio("audio/menu-buttom-190020_cut.mp3");
+  var audio2= new Audio("audio/cute-level-up-2-189851.mp3");
+  var audio3= new Audio("audio/shush-90127.mp3");
+  
 function startScanner() {
     const scannerContainer = document.querySelector('#scanner-container');
     const containerWidth = scannerContainer.offsetWidth; 
@@ -70,14 +74,46 @@ function startScanner() {
 
         console.log("Initialization finished. Ready to start");
         Quagga.start();
-
-        // Set flag to is running
-        _scannerIsRunning = true;
     });
 
 
     Quagga.onDetected(function (result) {
         console.log("Barcode detected and processed : [" + result.codeResult.code + "]", result);
+        new_code = parseInt(result.codeResult.code)
+        if (isNaN(new_code)){
+          last_counter = 0;
+        } else {
+          item = document.getElementsByClassName("gallery-item")[new_code%150]
+          img = item.getElementsByTagName('img')[0]
+          
+
+            if (new_code == last_code) {            
+              last_counter++;
+
+              if (last_counter == 10) {
+                if (img.src.includes('_mask')) {
+                img.src = img.src.replace('_mask','')
+                item.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+                last_counter = 0;
+                audio2.currentTime = 0; audio2.play();
+                } else {
+                  audio3.currentTime = 0; audio3.play();
+                  last_counter = 0;
+                }
+              }
+                else {
+                  if ((last_counter % 2  == 0) && img.src.includes('_mask')) {
+                  audio.currentTime = 0; audio.play();
+                  }
+                }
+
+            } else {
+              last_counter = 0;
+            }
+          
+
+        }
+        last_code = new_code;
     });
 }
 
@@ -102,7 +138,7 @@ function initGallery() {
     img.src = baseSrc;
     
     // Set hover effect
-    img.addEventListener('click', () => img.src = hoverSrc);
+    //img.addEventListener('click', () => img.src = hoverSrc);
     //img.addEventListener('mouseleave', () => img.src = baseSrc);
 
     item.appendChild(img);
