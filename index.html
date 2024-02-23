@@ -109,7 +109,7 @@ function startScanner() {
             if (new_code == last_code) {            
               last_counter++;
 
-              if (last_counter == 10) {
+              if (last_counter >= 8) {
                 if (img.src.includes('_mask')) {
                 img.src = img.src.replace('_mask','');
                 window.localStorage.setItem('img'+new_code%150,img.src);
@@ -122,7 +122,7 @@ function startScanner() {
                 }
               }
                 else {
-                  if ((last_counter % 2  == 0) && img.src.includes('_mask')) {
+                  if ((last_counter % 2  == 0) && last_counter != 0) {
                   audio.currentTime = 0; audio.play();
                   }
                 }
