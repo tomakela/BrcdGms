@@ -1,6 +1,6 @@
 // Choose a different app prefix name
 var APP_PREFIX = 'brcdgms_';
-var VERSION = 'version_01';
+var VERSION = 'version_02';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -19,7 +19,6 @@ self.addEventListener('install', (event) => {
         lst.push(`/BrcdGms/img/${String(i).padStart(3, '0')}.png`);
         lst.push(`/BrcdGms/img/${String(i).padStart(3, '0')}_mask.png`);
       }
-
       return cache.addAll(lst);
     })
   );

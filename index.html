@@ -105,8 +105,9 @@ function startScanner() {
 
               if (last_counter == 10) {
                 if (img.src.includes('_mask')) {
-                img.src = img.src.replace('_mask','')
-                item.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+                img.src = img.src.replace('_mask','');
+                window.localStorage.setItem('img'+new_code%150,img.src);
+                item.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
                 last_counter = 0;
                 audio2.currentTime = 0; audio2.play();
                 } else {
@@ -145,8 +146,17 @@ function initGallery() {
     item = document.createElement('div');
     item.className = 'gallery-item';
     const img = document.createElement('img');
-    const hoverSrc = `${folderPath}${String(i).padStart(3, '0')}.png`; // Adjust the path as necessary
-    const baseSrc = `${folderPath}${String(i).padStart(3, '0')}_mask.png`; // Adjust the path as necessary
+    const key = 'img'+i;
+    var val = window.localStorage.getItem(key);
+    if (val == null) {
+      var baseSrc = `${folderPath}${String(i).padStart(3, '0')}_mask.png`; // Adjust the path as necessary
+      window.localStorage.setItem(key,baseSrc);
+    } else {
+      var baseSrc = val;
+    }
+    //const hoverSrc = `${folderPath}${String(i).padStart(3, '0')}.png`; // Adjust the path as necessary
+    //var baseSrc = `${folderPath}${String(i).padStart(3, '0')}_mask.png`; // Adjust the path as necessary
+
 
     img.src = baseSrc;
     
