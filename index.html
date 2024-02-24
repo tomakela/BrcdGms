@@ -32,7 +32,6 @@
   <div id="gallery"></div>
 
   <script src="js/quagga.min.js"></script>
-  <script src="js/MersenneTwister.js"></script>
 
 <script>
   var last_code = 0;
@@ -41,6 +40,7 @@
   var audio2= new Audio("audio/cute-level-up-2-189851.mp3");
   var audio3= new Audio("audio/shush-90127.mp3");
   var last_img;
+  var running = true;
 
 function startScanner() {
     const scannerContainer = document.querySelector('#scanner-container');
@@ -117,14 +117,15 @@ function startScanner() {
             if (new_code == last_code) {            
               last_counter++;
 
-              if (last_counter >= 8) {
+              if (last_counter >= 8 && running) {
+                running = false;
                 if (img.src.includes('_mask')) {
                 img.src = img.src.replace('_mask','');
                 window.localStorage.setItem('img'+new_code%150,img.src);
                 item.scrollIntoView({ behavior: "instant", block: "center", inline: "nearest" });
                 last_counter = 0;
                 audio2.currentTime = 0; audio2.play();
-                } else {
+                } else  {
                   item.scrollIntoView({ behavior: "instant", block: "center", inline: "nearest" });
                   item.classList.remove("animation")
                   item.offsetWidth
@@ -132,10 +133,12 @@ function startScanner() {
                   audio3.currentTime = 0; audio3.play();
                   last_counter = 0;
                 }
+                running = true;
               }
                 else {
                   if ((last_counter % 2  == 0) && last_counter != 0) {
-                  audio.currentTime = 0; audio.play();
+                    if (running) {
+                  audio.currentTime = 0; audio.play(); }
                   }
                 }
 
