@@ -32,6 +32,7 @@
   <div id="gallery"></div>
 
   <script src="js/quagga.min.js"></script>
+  <script src="js/MersenneTwister.js"></script>
 
 <script>
   var last_code = 0;
@@ -106,6 +107,8 @@ function startScanner() {
         if (isNaN(new_code)){
           last_counter = 0;
         } else {
+          var mt = new MersenneTwister(new_code);
+          new_code = mt.int();
           item = document.getElementsByClassName("gallery-item")[new_code%150]
           img = item.getElementsByTagName('img')[0]
           

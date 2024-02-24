@@ -1,6 +1,6 @@
 // Choose a different app prefix name
 var APP_PREFIX = 'brcdgms_';
-var VERSION = 'version_09';
+var VERSION = 'version_10';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -12,6 +12,7 @@ self.addEventListener('install', (event) => {
         '/BrcdGms/audio/menu-buttom-190020_cut.mp3',
         '/BrcdGms/audio/shush-90127.mp3',
         '/BrcdGms/js/quagga.min.js',
+        '/BrcdGms/js/MersenneTwister.js',
         '/BrcdGms/favicon.ico'
         // other assets you want to cache
       ];
