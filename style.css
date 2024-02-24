@@ -43,5 +43,20 @@ img {
   transition: transform 0.3s ease;
 }
 img:hover {
-  transform: scale(1.1); /* Optional: adds a slight zoom effect on hover */
+  transform: scale(1.1);
 }
+
+.animation {
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  animation-name: wiggle;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+ 25% { transform: rotate(-7.5deg); }
+ 50% { transform: rotate(5deg); }
+ 75% { transform: rotate(-3.5deg); }
+100% { transform: rotate(0deg); }
+}
+

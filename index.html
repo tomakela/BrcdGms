@@ -40,7 +40,8 @@
   var audio = new Audio("audio/menu-buttom-190020_cut.mp3");
   var audio2= new Audio("audio/cute-level-up-2-189851.mp3");
   var audio3= new Audio("audio/shush-90127.mp3");
-  
+  var last_img;
+
 function startScanner() {
     const scannerContainer = document.querySelector('#scanner-container');
     const containerWidth = 800;
@@ -120,10 +121,14 @@ function startScanner() {
                 if (img.src.includes('_mask')) {
                 img.src = img.src.replace('_mask','');
                 window.localStorage.setItem('img'+new_code%150,img.src);
-                item.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                item.scrollIntoView({ behavior: "instant", block: "center", inline: "nearest" });
                 last_counter = 0;
                 audio2.currentTime = 0; audio2.play();
                 } else {
+                  item.scrollIntoView({ behavior: "instant", block: "center", inline: "nearest" });
+                  item.classList.remove("animation")
+                  item.offsetWidth
+                  item.classList.add("animation");
                   audio3.currentTime = 0; audio3.play();
                   last_counter = 0;
                 }
@@ -144,6 +149,21 @@ function startScanner() {
     });
 }
 
+var timer;
+    //Time of the long press
+    const tempo = 3000; //Time 1000ms = 1s
+    const mouseDown = () => {
+        timer = setTimeout(function(){ 
+                //Insert your function here
+                window.localStorage.clear();
+                last_img.classList.remove("animation")
+                last_img.offsetWidth
+                last_img.classList.add("animation");
+        }, tempo);
+    };
+    const mouseUp = () => {
+        clearTimeout(timer);
+    };
 
 const totalImages = 150; // Total number of images
 const imagesPerColumn = 3; // Replace N with the desired number of images per column
@@ -154,11 +174,12 @@ function initGallery() {
   const rows = [];
   const numberOfRows = totalImages / imagesPerColumn;
 
+  var img;
   let row = null
   for (let i = 0; i < totalImages; i++) {
     item = document.createElement('div');
     item.className = 'gallery-item';
-    const img = document.createElement('img');
+    img = document.createElement('img');
     const key = 'img'+i;
     var val = window.localStorage.getItem(key);
     if (val == null) {
@@ -167,6 +188,11 @@ function initGallery() {
     } else {
       var baseSrc = val;
     }
+    last_img = img;
+    img.ontouchstart=mouseDown;
+    img.ontouchend=mouseUp;
+    img.onmousedown=mouseDown;
+    img.onmouseup=mouseUp;
     //const hoverSrc = `${folderPath}${String(i).padStart(3, '0')}.png`; // Adjust the path as necessary
     //var baseSrc = `${folderPath}${String(i).padStart(3, '0')}_mask.png`; // Adjust the path as necessary
 
