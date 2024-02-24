@@ -42,10 +42,12 @@
   
 function startScanner() {
     const scannerContainer = document.querySelector('#scanner-container');
+    const containerWidth = 800;
+    const containerHeight = 600;
     //const containerWidth = scannerContainer.offsetWidth;
-    const containerWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) 
+    //const containerWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) 
     //const containerHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
-    const containerHeight = containerWidth/16*9
+    //const containerHeight = containerWidth/16*9
     //const containerHeight = 0.5*containerWidth
     //const containerHeight = scannerContainer.offsetHeight; 
     Quagga.init({
