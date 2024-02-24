@@ -1,6 +1,6 @@
 // Choose a different app prefix name
 var APP_PREFIX = 'brcdgms_';
-var VERSION = 'version_08';
+var VERSION = 'version_09';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
